@@ -1,0 +1,68 @@
+@use "../tokens" as *;
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $gap;
+  padding: 12px 16px;
+  background: $surface;
+  border-bottom: 1px solid $border;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+
+  &__left { display: flex; align-items: center; gap: 10px; }
+
+  &__brand {
+    font-weight: 700;
+    color: $brand;
+  }
+
+  &__hamburger {
+    display: none;
+    background: transparent;
+    color: $fg;
+    border: 1px solid $border;
+    padding: 6px 10px;
+    border-radius: $radius;
+    cursor: pointer;
+  }
+
+  &__title {
+    flex: 1;
+    text-align: center;
+    color: $fg;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  &__session {
+    color: $muted;
+    font-size: 12px;
+  }
+
+  &__reset {
+    background: transparent;
+    color: $fg;
+    border: 1px solid $border;
+    padding: 6px 10px;
+    border-radius: $radius;
+    cursor: pointer;
+  }
+  &__reset:disabled { opacity: 0.6; cursor: default; }
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    &__hamburger { display: inline-flex; }
+    &__session { display: none; }
+  }
+}
