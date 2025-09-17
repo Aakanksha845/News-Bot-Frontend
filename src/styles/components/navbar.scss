@@ -12,7 +12,11 @@
   top: 0;
   z-index: 20;
 
-  &__left { display: flex; align-items: center; gap: 10px; }
+  &__left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
 
   &__brand {
     font-weight: 700;
@@ -57,12 +61,19 @@
     border-radius: $radius;
     cursor: pointer;
   }
-  &__reset:disabled { opacity: 0.6; cursor: default; }
+  &__reset:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
 }
 
 @media (max-width: 768px) {
   .navbar {
-    &__hamburger { display: inline-flex; }
-    &__session { display: none; }
+    &__hamburger {
+      display: inline-flex;
+    }
+    &__session {
+      display: none;
+    }
   }
 }
