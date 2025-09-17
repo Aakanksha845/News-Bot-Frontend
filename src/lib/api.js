@@ -2,7 +2,7 @@ const API_BASE = import.meta.env.VITE_API_BASE || "";
 const CHAT_ROUTE = import.meta.env.VITE_CHAT_ROUTE || "/api/chat";
 
 const SESSION_KEY = "chat_session_id";
-const SESSIONS_LIST_KEY = "chat_sessions_meta"; // [{id,title,updatedAt}] (legacy local list)
+const SESSIONS_LIST_KEY = "chat_sessions_meta";
 const PENDING_CHAT_ID = "__pending__";
 
 function readSessionsList() {
@@ -25,7 +25,6 @@ function getOrCreateSessionId() {
       globalThis.crypto?.randomUUID?.() ||
       `${Date.now()}-${Math.random().toString(16).slice(2)}`;
     localStorage.setItem(SESSION_KEY, sid);
-    // legacy local sessions list entry (used only for navbar fallback)
     const list = readSessionsList();
     list.unshift({ id: sid, title: "New Chat", updatedAt: Date.now() });
     writeSessionsList(list);
@@ -76,7 +75,6 @@ export const api = {
     return getOrCreateSessionId();
   },
 
-  // Legacy local sessions list (kept for navbar fallback title)
   listSessions() {
     return readSessionsList();
   },
@@ -115,7 +113,6 @@ export const api = {
     writeSessionsList(list);
   },
 
-  // Selected chat id helpers
   getSelectedChatId() {
     return getSelectedChatIdInternal();
   },
@@ -126,10 +123,9 @@ export const api = {
     setSelectedChatIdInternal(PENDING_CHAT_ID);
   },
 
-  // New endpoints
   async fetchSession() {
     const sessionId = getOrCreateSessionId();
-    return http("GET", `${CHAT_ROUTE}/${encodeURIComponent(sessionId)}`); // { session: { chats: [...] } }
+    return http("GET", `${CHAT_ROUTE}/${encodeURIComponent(sessionId)}`);
   },
 
   async listChats() {
@@ -150,7 +146,7 @@ export const api = {
     );
     const { chatId } = data || {};
     if (chatId) setSelectedChatIdInternal(chatId);
-    return data; // { chatId, title, createdAt, updatedAt }
+    return data;
   },
 
   async deleteChat(chatId) {
@@ -205,14 +201,14 @@ export const api = {
         `${CHAT_ROUTE}/${encodeURIComponent(
           sessionId
         )}/chats/${encodeURIComponent(selectedChatId)}`
-      ); // { chatId, messages }
+      );
       const messages = data?.messages || [];
       return messages.map((m) => ({
         role: m.role === "bot" ? "assistant" : "user",
         content: m.message,
       }));
     }
-    const sess = await this.fetchSession(); // { session: { chats: [...] } }
+    const sess = await this.fetchSession();
     const chats = sess?.session?.chats || [];
     const defaultChat = chats.find((c) => c.chatId === "default") || chats[0];
     const messages = defaultChat?.messages || [];
@@ -225,7 +221,6 @@ export const api = {
   async sendMessage(message) {
     const sessionId = getOrCreateSessionId();
     const selectedChatId = getSelectedChatIdInternal();
-    // If pending or none selected, create a chat with the first question as title
     if (!selectedChatId || selectedChatId === PENDING_CHAT_ID) {
       const title = message.slice(0, 40);
       const created = await this.createChat(title);
@@ -270,7 +265,7 @@ export const api = {
     try {
       await http("DELETE", `${CHAT_ROUTE}/${encodeURIComponent(oldId)}`);
     } catch (e) {
-      // ignore
+      // show the error message to the user - future enhancements
     }
     try {
       localStorage.removeItem(SESSION_KEY);

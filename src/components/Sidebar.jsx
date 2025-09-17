@@ -41,7 +41,7 @@ export default function Sidebar({ onSelect, open = false, onClose }) {
       const newId = data?.chatId || api.getSelectedChatId();
       if (newId) onSelect?.(newId);
     } catch {
-      // no-op
+      // improve further to manage the failures and show the user the corresponding error message as a banner
     }
   };
 
